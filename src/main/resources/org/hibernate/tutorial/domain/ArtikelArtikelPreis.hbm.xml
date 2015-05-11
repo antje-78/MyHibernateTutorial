@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.hibernate.tutorial.domain">
+	<class name="ArtikelArtikelPreis" table="ARTIKEL_ARTIKEL_PREIS" >
+		<id column="ARTIKEL_ARTIKEL_PREIS_ID" access="field" type="long" unsaved-value="-1">
+			<generator class="sequence">
+				<param name="name">ID</param>
+			</generator>
+		</id>
+
+		<property name="gueltigAb" column="GUELTIG_AB" type="timestamp" />
+		<property name="preis" column="PREIS" type="long"  />
+
+		<many-to-one name="artikelArtikel" column="ARTIKEL_ARTIKEL_ID" class="ArtikelArtikel" insert="false" update="false" cascade="persist,merge,save-update,delete" />
+	</class>
+</hibernate-mapping>

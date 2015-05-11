@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.hibernate.tutorial.domain">
+
+    <class name="PersonEventView" table="PERSON_EVENT" mutable="false">
+    	<composite-id mapped="true" access="field">
+    		<key-many-to-one name="person" column="PERSON_ID" access="field" class="Person" />
+    		<key-many-to-one name="event" column="EVENT_ID" access="field" class="Event" />
+    	</composite-id>
+		<loader query-ref="PersonEventView.load" />
+    </class>
+
+	<query name="PersonEventView.load" >
+		<query-param name="id" type="long"/>
+		<![CDATA[
+			select new PersonEventView(min(person))
+			from Person person left join person.events as view
+			where person.id = :id
+			group by person.id
+		]]>
+	</query>
+</hibernate-mapping>

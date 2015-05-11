@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.hibernate.tutorial.domain">
+
+    <class name="Person" table="PERSON">
+        <id name="id" column="PERSON_ID" unsaved-value="-1">
+            <generator class="sequence">
+            	<param name="name">ID</param>
+            </generator>
+        </id>
+        <property name="age"/>
+        <property name="firstname"/>
+        <property name="lastname"/>
+
+        <set name="events" table="PERSON_EVENT" lazy="true">
+            <key column="PERSON_ID" />
+            <many-to-many column="EVENT_ID" class="Event"/>
+        </set>
+
+		<property name="eventCount" access="noop" type="long" />
+<!--         <set name="minEventDatum" inverse="true" access="field" cascade="refresh" fetch="join" lazy="false" outer-join="true"> -->
+<!--             <subselect> -->
+<!--             	<![CDATA[ -->
+<!--  				SELECT PERSON_EVENT.PERSON_ID, MIN(EVENT_DATE) as MIN_DATE -->
+<!--  				FROM PERSON_EVENT LEFT JOIN EVENTS ON PERSON_EVENT.EVENT_ID = EVENTS.EVENT_ID -->
+<!--  				GROUP BY PERSON_EVENT.PERSON_ID -->
+<!--              	]]> -->
+<!--             </subselect> -->
+<!--             <key column="PERSON_ID" on-delete="noaction"/> -->
+<!--             <element column="MIN_DATE" type="timestamp" /> -->
+<!--         </set> -->
+
+        <set name="emailAddresses" table="PERSON_EMAIL_ADDR">
+            <key column="PERSON_ID" not-null="true" update="false" />
+            <element type="string" column="EMAIL_ADDR" />
+        </set>
+		<loader query-ref="Person.load" />
+    </class>
+
+	<query name="Person.load" >
+		<query-param name="id" type="long"/>
+		<![CDATA[
+			select person, count(event.id) as eventCount
+			from org.hibernate.tutorial.domain.Person as person left join person.events as event
+			where person.id = :id
+			group by person
+		]]>
+	</query>
+</hibernate-mapping>

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.hibernate.tutorial.domain">
+	<class name="ArtikelArtikel" table="ARTIKEL_ARTIKEL">
+		<id name="id" column="ARTIKEL_ARTIKEL_ID" type="long" unsaved-value="-1">
+			<generator class="sequence">
+				<param name="name">ID</param>
+			</generator>
+		</id>
+
+		<many-to-one name="parentArtikel" column="PARENT_ARTIKEL" class="Artikel" />
+		<many-to-one name="childArtikel" column="CHILD_ARTIKEL" class="Artikel" />
+
+		<set name="preise" access="field" cascade="all,delete-orphan">
+			<key column="ARTIKEL_ARTIKEL_ID" not-null="true" />
+			<one-to-many class="ArtikelArtikelPreis" />
+		</set>
+	</class>
+</hibernate-mapping>
