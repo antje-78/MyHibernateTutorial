@@ -5,7 +5,7 @@
 
 <hibernate-mapping package="org.hibernate.tutorial.domain">
 
-    <class name="Person" table="PERSON">
+    <class name="Person" table="PERSON" >
         <id name="id" column="PERSON_ID" unsaved-value="-1">
             <generator class="sequence">
             	<param name="name">ID</param>
@@ -20,7 +20,8 @@
             <many-to-many column="EVENT_ID" class="Event"/>
         </set>
 
-		<property name="eventCount" access="noop" type="long" />
+<!-- 		<property name="eventCount" access="noop" type="long" formula="" generated="always" /> -->
+<!-- 		<property name="minEventDatum" access="noop" type="long" formula="" generated="always"/> -->
 <!--         <set name="minEventDatum" inverse="true" access="field" cascade="refresh" fetch="join" lazy="false" outer-join="true"> -->
 <!--             <subselect> -->
 <!--             	<![CDATA[ -->
@@ -44,7 +45,8 @@
 		<query-param name="id" type="long"/>
 		<![CDATA[
 			select person, count(event.id) as eventCount
-			from org.hibernate.tutorial.domain.Person as person left join person.events as event
+			from org.hibernate.tutorial.domain.Person as person
+			left join person.events as event
 			where person.id = :id
 			group by person
 		]]>

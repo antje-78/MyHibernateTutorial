@@ -10,4 +10,4 @@ then
 fi
 echo Starting database engine...
 cd data/
-java -classpath /home/aw/.m2/repository/org/hsqldb/hsqldb/2.3.2/hsqldb-2.3.2.jar org.hsqldb.Server
+java -classpath /opt/programs/hsqldb-2.3.2/hsqldb/lib/hsqldb.jar org.hsqldb.Server -database.0 file:/home/aw/workspace-intellij-git/HibernateTutorial/target/data/tutorial -dbname.0 xdb

@@ -12,8 +12,8 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.tutorial.domain.Event;
+import org.hibernate.tutorial.domain.IPerson;
 import org.hibernate.tutorial.domain.Person;
-import org.hibernate.tutorial.domain.PersonEventView;
 import org.hibernate.tutorial.util.HibernateUtil;
 
 public class EventManager {
@@ -24,31 +24,16 @@ public class EventManager {
 		private static Long event1Id;
 		private static Long event2Id;
 		private static Long event3Id;
-		private static Long personId;
+		private static Long personId1;
 		private static Long personId2;
+		private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.GERMANY);
 
 		public MyTest() {
 			super();
 		}
 
-		private void customHqlQueryPerson() {
-			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-
-			session.beginTransaction();
-			//			StringBuilder query = new StringBuilder("select person from org.hibernate.tutorial.domain.PersonEventView person where person.personId = :id");
-			Person person = (Person) session.load("org.hibernate.tutorial.domain.Person", this.personId);
-			Object result = session.load("org.hibernate.tutorial.domain.PersonEventView", new PersonEventView(person));
-			LOG.info("Results for customHqlQueryPerson: ");
-			LOG.info("\t- " + result);
-//			for (Object object : result) {
-//				LOG.info("\t- " + result);
-//			}
-			session.getTransaction().commit();
-		}
-
 		public static void main(String[] args) {
 			MyTest mgr = new MyTest();
-			SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.GERMANY);
 			mgr.deleteAll();
 			Calendar calendar = Calendar.getInstance(Locale.GERMANY);
 			calendar.set(2014, 11, 12);
@@ -61,32 +46,51 @@ public class EventManager {
 			List<Event> events = mgr.listEvents();
 			for (int i = 0; i < events.size(); i++) {
 				Event theEvent = events.get(i);
-				LOG.info("Event: " + theEvent.getTitle() + " Time: " + dateFormat.format(theEvent.getDate()));
+				LOG.info("Event: " + theEvent.getTitle() + " Time: " + DATE_FORMAT.format(theEvent.getDate()));
 			}
 
-			personId = mgr.createAndStorePerson("Foo", "Bar");
-			mgr.addPersonToEvent(personId, event1Id);
-			LOG.info("Added person " + personId + " to event " + event1Id);
-			mgr.addPersonToEvent(personId, event2Id);
-			LOG.info("Added person " + personId + " to event " + event2Id);
-			mgr.addPersonToEvent(personId, event3Id);
-			LOG.info("Added person " + personId + " to event " + event3Id);
+			personId1 = mgr.createAndStorePerson("Foo", "Bar");
+			mgr.addPersonToEvent(personId1, event1Id);
+			LOG.info("Added person " + personId1 + " to event " + event1Id);
+			mgr.addPersonToEvent(personId1, event2Id);
+			LOG.info("Added person " + personId1 + " to event " + event2Id);
+			mgr.addPersonToEvent(personId1, event3Id);
+			LOG.info("Added person " + personId1 + " to event " + event3Id);
 
 			personId2 = mgr.createAndStorePerson("Foozy", "Beary");
 			mgr.addEmailToPerson(personId2, "foo@bar");
 			mgr.addEmailToPerson(personId2, "bar@foo");
 			LOG.info("Added two email addresses (value typed objects) to person entity : " + personId2);
 
+			LOG.info("Load Person1:");
+			IPerson person1 = mgr.loadPerson(personId1);
+			LOG.info("Load Person2:");
+			IPerson person2 = mgr.loadPerson(personId2);
 			List<Person> persons = mgr.listPersons();
-			for (Person person : persons) {
-				LOG.info("Person: " + person.getId() + " " + person.getFullName() + ", " + person.getEventCount() + ", " + person.getMinEventDatum());
-				Set<Event> personEvents = person.getEvents();
-				for (Event event : personEvents) {
-					LOG.info("\tEvent: " + event.getId() + ", " + dateFormat.format(event.getDate()) + ", " + event.getTitle());
-				}
-			}
-			mgr.customHqlQueryPerson();
+//			for (Person person : persons) {
+//				LOG.info("Person: " + person2.getId() + " " + person2.getFullName() + ", " + person2.getEventCount() + ", " + person2.getMinEventDatum());
+//				Set<Event> personEvents = person2.getEvents();
+//				for (Event event : personEvents) {
+//					LOG.info("\tEvent: " + event.getId() + ", " + DATE_FORMAT.format(event.getDate()) + ", " + event.getTitle());
+//				}
+//			}
+//			mgr.customHqlQueryPerson();
 			HibernateUtil.getSessionFactory().close();
+		}
+
+		private IPerson loadPerson(Long personId) {
+			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+
+			session.beginTransaction();
+			//			StringBuilder query = new StringBuilder("select person from org.hibernate.tutorial.domain.PersonEventView person where person.personId = :id");
+			IPerson person = (IPerson) session.load("org.hibernate.tutorial.domain.Person", personId);
+			LOG.info("Person: " + person.getId() + " " + person.getFullName() + ", " + person.getEventCount() + ", " + person.getMinEventDatum());
+			Set<Event> personEvents = person.getEvents();
+			for (Event event : personEvents) {
+				LOG.info("\tEvent: " + event.getId() + ", " + DATE_FORMAT.format(event.getDate()) + ", " + event.getTitle());
+			}
+			session.getTransaction().commit();
+			return person;
 		}
 	}
 
@@ -143,7 +147,7 @@ public class EventManager {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
 
-        Person thePerson = new Person();
+        IPerson thePerson = new Person();
         thePerson.setFirstname(firstname);
         thePerson.setLastname(lastname);
 
@@ -176,7 +180,7 @@ public class EventManager {
     	Query query = session.createQuery("from Person");
 //    	query.setReadOnly(true);
 		List<Person> result = query.list();
-    	for (Person person : result) {
+    	for (IPerson person : result) {
 			person.getAge();
 			person.getEmailAddresses().size();
 			person.getEvents().size();
@@ -193,7 +197,7 @@ public class EventManager {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
 
-        Person aPerson = (Person) session
+        IPerson aPerson = (IPerson) session
                 .createQuery("select p from Person p left join fetch p.events where p.id = :pid")
                 .setParameter("pid", personId)
                 .uniqueResult(); // Eager fetch the collection so we can use it detached
@@ -230,7 +234,7 @@ public class EventManager {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
 
-        Person aPerson = ( Person ) session.load(Person.class, personId);
+        IPerson aPerson = ( IPerson ) session.load(Person.class, personId);
 
         // The getEmailAddresses() might trigger a lazy load of the collection
         aPerson.getEmailAddresses().add(emailAddress);
@@ -242,7 +246,7 @@ public class EventManager {
     	List<Person> persons = listPersons();
     	Session session = HibernateUtil.getSessionFactory().getCurrentSession();
     	session.beginTransaction();
-    	for (Person person : persons) {
+    	for (IPerson person : persons) {
 			session.delete(person);
 		}
     	session.getTransaction().commit();

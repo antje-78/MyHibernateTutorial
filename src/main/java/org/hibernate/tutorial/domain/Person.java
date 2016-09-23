@@ -1,60 +1,100 @@
 package org.hibernate.tutorial.domain;
 
-import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Person implements Serializable {
+public class Person implements IPerson  {
 
     private Long id;
     private int age;
     private String firstname;
     private String lastname;
-    private Set minEventDatum;
+    private Date minEventDatum;
     private Long eventCount;
 
     public Person() {}
 
-    public Long getId() {
+    /* (non-Javadoc)
+	 * @see org.hibernate.tutorial.domain.IPerson2#getId()
+	 */
+    @Override
+	public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    /* (non-Javadoc)
+	 * @see org.hibernate.tutorial.domain.IPerson2#setId(java.lang.Long)
+	 */
+    @Override
+	public void setId(Long id) {
         this.id = id;
     }
 
-    public int getAge() {
+    /* (non-Javadoc)
+	 * @see org.hibernate.tutorial.domain.IPerson2#getAge()
+	 */
+    @Override
+	public int getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    /* (non-Javadoc)
+	 * @see org.hibernate.tutorial.domain.IPerson2#setAge(int)
+	 */
+    @Override
+	public void setAge(int age) {
         this.age = age;
     }
 
-    public String getFirstname() {
+    /* (non-Javadoc)
+	 * @see org.hibernate.tutorial.domain.IPerson2#getFirstname()
+	 */
+    @Override
+	public String getFirstname() {
         return firstname;
     }
 
-    public void setFirstname(String firstname) {
+    /* (non-Javadoc)
+	 * @see org.hibernate.tutorial.domain.IPerson2#setFirstname(java.lang.String)
+	 */
+    @Override
+	public void setFirstname(String firstname) {
         this.firstname = firstname;
     }
 
-    public String getLastname() {
+    /* (non-Javadoc)
+	 * @see org.hibernate.tutorial.domain.IPerson2#getLastname()
+	 */
+    @Override
+	public String getLastname() {
         return lastname;
     }
 
-    public void setLastname(String lastname) {
+    /* (non-Javadoc)
+	 * @see org.hibernate.tutorial.domain.IPerson2#setLastname(java.lang.String)
+	 */
+    @Override
+	public void setLastname(String lastname) {
         this.lastname = lastname;
     }
 
 
     private Set<String> emailAddresses = new HashSet<String>();
 
-    public Set<String> getEmailAddresses() {
+    /* (non-Javadoc)
+	 * @see org.hibernate.tutorial.domain.IPerson2#getEmailAddresses()
+	 */
+    @Override
+	public Set<String> getEmailAddresses() {
         return emailAddresses;
     }
 
-    public void setEmailAddresses(Set<String> emailAddresses) {
+    /* (non-Javadoc)
+	 * @see org.hibernate.tutorial.domain.IPerson2#setEmailAddresses(java.util.Set)
+	 */
+    @Override
+	public void setEmailAddresses(Set<String> emailAddresses) {
         this.emailAddresses = emailAddresses;
     }
 
@@ -62,7 +102,11 @@ public class Person implements Serializable {
     private Set<Event> events = new HashSet<Event>();
 
     // Defensive, convenience methods
-    public Set<Event> getEvents() {
+    /* (non-Javadoc)
+	 * @see org.hibernate.tutorial.domain.IPerson2#getEvents()
+	 */
+    @Override
+	public Set<Event> getEvents() {
         return events;
     }
 
@@ -70,44 +114,60 @@ public class Person implements Serializable {
         this.events = events;
     }
 
-    public void addToEvent(Event event) {
+    /* (non-Javadoc)
+	 * @see org.hibernate.tutorial.domain.IPerson2#addToEvent(org.hibernate.tutorial.domain.Event)
+	 */
+    @Override
+	public void addToEvent(Event event) {
         this.getEvents().add(event);
         event.getParticipants().add(this);
     }
 
-    public void removeFromEvent(Event event) {
+    /* (non-Javadoc)
+	 * @see org.hibernate.tutorial.domain.IPerson2#removeFromEvent(org.hibernate.tutorial.domain.Event)
+	 */
+    @Override
+	public void removeFromEvent(Event event) {
         this.getEvents().remove(event);
         event.getParticipants().remove(this);
     }
 
-	/**
-	 * @return the minEventDatum
+	/* (non-Javadoc)
+	 * @see org.hibernate.tutorial.domain.IPerson2#getMinEventDatum()
 	 */
-	public Set getMinEventDatum() {
+	@Override
+	public Date getMinEventDatum() {
 		return minEventDatum;
 	}
 
-	/**
-	 * @param minEventDatum the minEventDatum to set
+	/* (non-Javadoc)
+	 * @see org.hibernate.tutorial.domain.IPerson2#setMinEventDatum(java.util.Date)
 	 */
-	public void setMinEventDatum(Set minEventDatum) {
+	@Override
+	public void setMinEventDatum(Date minEventDatum) {
 		this.minEventDatum = minEventDatum;
 	}
 
-	/**
-	 * @return the eventCount
+	/* (non-Javadoc)
+	 * @see org.hibernate.tutorial.domain.IPerson2#getEventCount()
 	 */
+	@Override
 	public Long getEventCount() {
 		return eventCount;
 	}
 
-	/**
-	 * @param eventCount the eventCount to set
+	/* (non-Javadoc)
+	 * @see org.hibernate.tutorial.domain.IPerson2#setEventCount(java.lang.Long)
 	 */
+	@Override
 	public void setEventCount(Long eventCount) {
 		this.eventCount = eventCount;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.hibernate.tutorial.domain.IPerson2#getFullName()
+	 */
+	@Override
 	public String getFullName() {
 		StringBuilder out = new StringBuilder(this.getFirstname());
 		if(this.getFirstname() != null && this.getFirstname().length() > 0)
@@ -122,9 +182,13 @@ public class Person implements Serializable {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Person [id=").append(id).append(", age=").append(age)
-				.append(", firstname=").append(firstname).append(", lastname=")
-				.append(lastname).append("]");
+		builder.append("Person [id=").append(id)
+			.append(", age=").append(age)
+			.append(", firstname=").append(firstname)
+			.append(", lastname=").append(lastname)
+			.append(", eventCount=").append(eventCount)
+			.append(", minEventDate=").append(minEventDatum)
+		.append("]");
 		return builder.toString();
 	}
 
